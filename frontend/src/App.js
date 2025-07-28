@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './App.css';
 
 const API_BASE = process.env.NODE_ENV === 'production' 
@@ -15,11 +15,30 @@ function App() {
   const [loginError, setLoginError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (token) {
-      fetchTasks();
+  // Use useCallback to memoize fetchTasks function
+  const fetchTasks = useCallback(async () => {
+    if (!token) return;
+    
+    try {
+      const response = await fetch(`${API_BASE}/tasks`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setTasks(data);
+      } else if (response.status === 401) {
+        // Token expired
+        logout();
+      }
+    } catch (error) {
+      console.error('Failed to fetch tasks:', error);
     }
-  }, [token]);
+  }, [token]); // Include token as dependency
+
+  useEffect(() => {
+    fetchTasks();
+  }, [fetchTasks]); // Include fetchTasks in dependency array
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -47,24 +66,6 @@ function App() {
       setLoginError('Network error. Please try again.');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const fetchTasks = async () => {
-    try {
-      const response = await fetch(`${API_BASE}/tasks`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        setTasks(data);
-      } else if (response.status === 401) {
-        // Token expired
-        logout();
-      }
-    } catch (error) {
-      console.error('Failed to fetch tasks:', error);
     }
   };
 
@@ -136,6 +137,7 @@ function App() {
     setEditingTask(null);
   };
 
+  // Rest of your component remains the same...
   if (!token) {
     return (
       <div className="login-container">
