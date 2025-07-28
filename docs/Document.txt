@@ -1,0 +1,287 @@
+Task Manager Application - Test Plan and Strategy Document
+1. Executive Summary
+This document outlines the comprehensive testing strategy for the Task Manager web application, a full-stack React/Node.js application with automated UI and API testing capabilities. The testing approach covers multiple layers including unit tests, integration tests, and end-to-end UI automation.
+
+2. What is Being Tested
+2.1 Application Under Test
+Frontend: React-based web application for task management
+
+Backend: Node.js/Express REST API with JWT authentication
+
+Database: In-memory storage (for demo purposes)
+
+Authentication: JWT-based login system
+
+Core Features: CRUD operations for tasks, user authentication, task completion status
+
+2.2 Test Scope
+In Scope:
+
+User authentication (login/logout)
+
+Task management operations (Create, Read, Update, Delete)
+
+Frontend-backend integration
+
+API endpoint functionality
+
+Form validations and error handling
+
+Cross-browser compatibility (Chrome primary)
+
+Responsive UI behavior
+
+Out of Scope:
+
+Performance testing
+
+Security penetration testing
+
+Database persistence testing
+
+Mobile app testing
+
+Load/stress testing
+
+3. Test Coverage Areas
+3.1 Functional Testing Areas
+Test Area	Coverage	Test Type
+Authentication	Valid/invalid login scenarios, JWT token validation, session management	API + UI
+Task Management	CRUD operations, task completion, form validations	API + UI
+User Interface	Form interactions, button functionality, dynamic updates	UI
+API Endpoints	Request/response validation, error handling, status codes	API
+Integration	Frontend-backend communication, data flow	E2E
+3.2 Technical Coverage Areas
+API Testing Coverage:
+
+POST /login - Authentication endpoint
+
+GET /tasks - Retrieve user tasks
+
+POST /tasks - Create new task
+
+PUT /tasks/:id - Update existing task
+
+DELETE /tasks/:id - Delete task
+
+Error handling for 400, 401, 403, 404, 500 status codes
+
+UI Testing Coverage:
+
+Login form validation
+
+Task creation workflow
+
+Task editing functionality
+
+Task deletion with confirmation
+
+Task completion toggle
+
+Logout functionality
+
+Error message display
+
+4. Tools Used and Justification
+4.1 API Testing Stack
+Tool	Purpose	Justification
+Jest	Test runner and assertion library	Built-in with Node.js, excellent mocking capabilities, coverage reporting
+Supertest	HTTP assertion library	Seamless integration with Express, handles server lifecycle automatically
+Why this combination:
+
+Fast test execution (no browser overhead)
+
+Comprehensive coverage reporting
+
+Easy CI/CD integration
+
+Industry standard for Node.js API testing
+
+4.2 UI Testing Stack
+Tool	Purpose	Justification
+Selenium WebDriver	Browser automation	Cross-browser support, mature ecosystem, extensive documentation
+Python	Test scripting language	Simple syntax, excellent Selenium bindings, rich testing ecosystem
+pytest	Test runner	Powerful fixtures, detailed reporting, parallel execution support
+Chrome WebDriver	Browser driver	Most commonly used browser, reliable automation support
+Why this combination:
+
+Real browser testing environment
+
+Cross-platform compatibility
+
+Comprehensive element interaction capabilities
+
+Visual validation support
+
+4.3 CI/CD Integration
+Tool	Purpose	Justification
+GitHub Actions	CI/CD pipeline	Free for public repos, excellent GitHub integration, parallel job execution
+pytest-html	Test reporting	Detailed HTML reports with screenshots on failure
+5. How to Run Tests
+5.1 Prerequisites
+bash
+# System Requirements
+- Node.js 18+
+- Python 3.9+
+- Chrome browser
+- Git
+
+# Project Setup
+git clone <repository-url>
+cd task-manager-project
+5.2 Local Test Execution
+Start Application Services:
+
+bash
+# Terminal 1: Backend API (Port 3001)
+cd backend
+npm install
+npm run dev
+
+# Terminal 2: Frontend React App (Port 3000)
+cd frontend
+npm install
+npm start
+
+# Terminal 3: Install Python dependencies
+pip install -r tests/requirements.txt
+Run API Tests:
+
+bash
+cd backend
+npm test                    # Run all API tests
+npm run test:coverage      # Run with coverage report
+Run UI Tests:
+
+bash
+# Ensure both frontend and backend are running
+python -m pytest tests/ui_tests.py -v                           # All UI tests
+python -m pytest tests/ui_tests.py::TaskManagerUITests::test_01_login_with_valid_credentials -v  # Specific test
+python -m pytest tests/ui_tests.py -v --html=report.html --self-contained-html  # With HTML report
+Run Headless (CI Mode):
+
+bash
+HEADLESS=true python -m pytest tests/ui_tests.py -v
+5.3 CI/CD Execution
+Tests run automatically on:
+
+Push to main or develop branches
+
+Pull requests to main
+
+Manual workflow dispatch
+
+Pipeline Stages:
+
+Backend Tests → API validation and unit tests
+
+Frontend Tests → React component tests (if any)
+
+UI Tests → End-to-end Selenium tests
+
+Deployment → Automated deployment on success
+
+6. Test Data and Environment
+6.1 Test Accounts
+text
+Username: admin | Password: password
+Username: user  | Password: password
+6.2 Test Environment URLs
+text
+Local Development:
+- Frontend: http://localhost:3000
+- Backend: http://localhost:3001
+
+CI/CD Environment:
+- Configured automatically in GitHub Actions
+7. Success Criteria
+7.1 Test Pass Criteria
+API Tests: 100% pass rate, >90% code coverage
+
+UI Tests: 100% pass rate across all critical user journeys
+
+Build Process: Successful compilation and deployment
+
+Performance: All tests complete within 5 minutes
+
+7.2 Quality Gates
+Zero critical bugs in authentication flow
+
+All CRUD operations function correctly
+
+Proper error handling and user feedback
+
+Cross-browser compatibility (Chrome validated)
+
+8. Assumptions and Limitations
+8.1 Assumptions
+Environment: Application runs on localhost during testing
+
+Data: In-memory storage resets between test runs
+
+Browser: Chrome browser available for UI automation
+
+Network: Stable internet connection for CI/CD
+
+Concurrency: Single user session testing only
+
+8.2 Current Limitations
+Data Persistence: Tests use in-memory storage, no database integration testing
+
+Authentication Model: Single user authentication, no role-based testing
+
+Browser Coverage: Limited to Chrome (primary), Firefox available as fallback
+
+Performance Testing: No load/stress testing included
+
+Security Testing: Basic validation only, no penetration testing
+
+Mobile Testing: Desktop-focused, responsive design not extensively tested
+
+8.3 Risk Mitigation Strategies
+Flaky Tests: Retry mechanisms and explicit waits implemented
+
+Environment Issues: Multiple WebDriver fallback strategies
+
+CI/CD Reliability: Parallel job execution with proper dependencies
+
+Test Maintenance: Centralized element selectors and helper methods
+
+8.4 Future Enhancements
+Integration with database testing
+
+Performance benchmarking
+
+Extended cross-browser testing
+
+Visual regression testing
+
+API contract testing
+
+Security vulnerability scanning
+
+9. Reporting and Monitoring
+9.1 Test Reports
+API Tests: Jest coverage reports with lcov format
+
+UI Tests: HTML reports with screenshots on failure
+
+CI/CD: GitHub Actions workflow summaries
+
+Coverage: Automated coverage reporting via Codecov integration
+
+9.2 Failure Handling
+Immediate Notifications: CI/CD failures reported via GitHub
+
+Screenshots: Captured automatically on UI test failures
+
+Logs: Detailed error logs preserved as artifacts
+
+Retry Logic: Automatic retry for transient failures
+
+Document Version: 1.0
+Last Updated: Current Date
+Maintained By: Development Team
+Review Cycle: Quarterly or on major releases
+
+This test strategy ensures comprehensive coverage of the Task Manager application while maintaining efficiency and reliability in both local development and CI/CD environments.
