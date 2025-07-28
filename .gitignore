@@ -68,7 +68,6 @@ jspm_packages/
 
 # Gatsby files
 .cache/
-public
 
 # Storybook build outputs
 .out
@@ -94,10 +93,15 @@ temp/
 ehthumbs.db
 Thumbs.db
 
-# Test reports
+# Test reports - but allow essential HTML files
 *.html
+!frontend/public/index.html
+!frontend/public/*.html
+
+# Allow test results but ignore generated reports in specific locations
 test-results/
 playwright-report/
+ui-test-report.html
 
 # Python
 __pycache__/
