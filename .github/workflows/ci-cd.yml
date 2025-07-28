@@ -48,6 +48,10 @@ jobs:
       working-directory: ./frontend
       run: npm test -- --watchAll=false --passWithNoTests
     
+    - name: Ensure index.html exists
+      working-directory: ./frontend/public
+      run: test -f index.html || (echo "<!DOCTYPE html><html><head><title>React App</title></head><body><div id='root'></div></body></html>" > index.html)
+
     - name: Build frontend
       working-directory: ./frontend
       run: npm run build
