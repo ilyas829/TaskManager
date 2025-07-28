@@ -50,7 +50,7 @@ jobs:
     # REMOVED: The problematic "Ensure index.html exists" step
     
     - name: Build frontend
-      working-directory: ./frontend
+      working-directory: ./frontend/public
       run: npm run build
 
   ui-tests:
